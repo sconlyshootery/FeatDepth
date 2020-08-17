@@ -1,43 +1,43 @@
-DEPTH_LAYERS = 50
-POSE_LAYERS = 18
-FRAME_IDS = [0, -1, 1, 's']
-IMGS_PER_GPU = 2
-HEIGHT = 192#320
-WIDTH = 640#1024
+DEPTH_LAYERS = 50#resnet50
+POSE_LAYERS = 18#resnet18
+FRAME_IDS = [0, -1, 1, 's']#0 refers to current frame, -1 and 1 refer to temperally adjacent frames, 's' refers to stereo adjacent frame.
+IMGS_PER_GPU = 3 #the number of images fed to each GPU
+HEIGHT = 320#input image height
+WIDTH = 1024#input image width
 
 data = dict(
-    name = 'kitti',
-    split = 'short',
+    name = 'kitti',#dataset name
+    split = 'exp',#training split name
     height = HEIGHT,
     width = WIDTH,
     frame_ids = FRAME_IDS,
-    in_path = '/media/user/harddisk/data/kitti/kitti_raw/rawdata',
-    gt_depth_path = '/media/user/harddisk/data/kitti/kitti_raw/rawdata/gt_depths.npz',
-    png = False,
+    in_path = '/media/user/harddisk/data/kitti/kitti_raw/rawdata',#path to raw data
+    gt_depth_path = '/media/user/harddisk/data/kitti/kitti_raw/rawdata/gt_depths.npz',#path to gt data
+    png = False,#image format
     stereo_scale = True if 's' in FRAME_IDS else False,
 )
 
 model = dict(
-    name = 'mono_fm',
+    name = 'mono_fm',# select a model by name
     depth_num_layers = DEPTH_LAYERS,
     pose_num_layers = POSE_LAYERS,
     frame_ids = FRAME_IDS,
     imgs_per_gpu = IMGS_PER_GPU,
     height = HEIGHT,
     width = WIDTH,
-    scales = [0, 1, 2, 3],
-    min_depth = 0.1,
-    max_depth = 100.0,
-    depth_pretrained_path = '/media/user/harddisk/weight/resnet/resnet{}.pth'.format(DEPTH_LAYERS),
-    pose_pretrained_path =  '/media/user/harddisk/weight/resnet/resnet{}.pth'.format(POSE_LAYERS),
-    extractor_pretrained_path = '/media/user/harddisk/weight/autoencoder.pth',
+    scales = [0, 1, 2, 3],# output different scales of depth maps
+    min_depth = 0.1, # minimum of predicted depth value
+    max_depth = 100.0, # maximum of predicted depth value
+    depth_pretrained_path = '/media/user/harddisk/weight/resnet/resnet{}.pth'.format(DEPTH_LAYERS),# pretrained weights for resnet
+    pose_pretrained_path =  '/media/user/harddisk/weight/resnet/resnet{}.pth'.format(POSE_LAYERS),# pretrained weights for resnet
+    extractor_pretrained_path = '/media/user/harddisk/weight/autoencoder.pth',# pretrained weights for autoencoder
     automask = False if 's' in FRAME_IDS else True,
     disp_norm = False if 's' in FRAME_IDS else True,
     perception_weight = 1e-3,
     smoothness_weight = 1e-3,
 )
 
-# resume_from = '/node01_data5/monodepth2-test/model/ms/ms.pth'
+# resume_from = '/node01_data5/monodepth2-test/model/ms/ms.pth'#directly start training from provide weights
 resume_from = None
 finetune = None
 total_epochs = 40

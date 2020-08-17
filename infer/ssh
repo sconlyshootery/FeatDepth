@@ -1,0 +1,5 @@
+ssh -p 60002 changshu@43.254.11.51
+sconly1992
+
+ssh hadoop-wallemnl@zw03-data-hdp-dn-gpu0031.mt -p 4313 
+mt121mnl

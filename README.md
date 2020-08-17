@@ -54,7 +54,7 @@ And we rescale the input resolution of our model to ensure training with 12 GB G
 You can modify the input resolution according to your computational resource.
 
 ## Finetuning
-If you want to finetune on a given weights, we can modify the 'resume_from' term from 'None' to an existing path to a pre-trained weight in the config files.
+If you want to finetune on a given weights, you can modify the 'resume_from' term from 'None' to an existing path to a pre-trained weight in the config files.
 
 ## Notes
 Our model predicts inverse depths.

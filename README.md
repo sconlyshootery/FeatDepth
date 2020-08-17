@@ -43,7 +43,7 @@ They are stored in folder 'scripts'.
 ## Training
 You can use following command to launch distributed learning of our model:
 ```shell
-/path/to/python -m torch.distributed.launch --master_port=9900 --nproc_per_node=1 train.py --config /path/to/cfg_kitti_fm.py --work_dir /path/to/dir/for/saving/weights/and/logs'
+/path/to/python -m torch.distributed.launch --master_port=9900 --nproc_per_node=1 train.py --config /path/to/cfg_kitti_fm.py --work_dir /dir/for/saving/weights/and/logs'
 ```
 Here nproc_per_node refers to GPU number you want to use.
 We provide a different configuration for different perferrence.

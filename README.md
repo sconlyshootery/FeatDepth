@@ -2,7 +2,7 @@
 Offical codes for ECCV2020 paper --- ['Feature-metric Loss for Self-supervised Learning of Depth and Egomotion'](https://arxiv.org/pdf/2007.10603.pdf).
 
 <p align="center">
-  <img src="assets/teaser.gif" alt="example input output gif" width="600" />
+  <img src="assets/p.png" alt="performance" width="600" />
 </p>
 
 If you find our work useful in your research please consider citing our paper:

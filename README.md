@@ -53,7 +53,7 @@ This mode is prefered when your GPU memory is lower than 16 GB;
 And we rescale the input resolution of our model to ensure training with 12 GB GPU memory, slightly reducing the performance.
 You can modify the input resolution according to your computational resource.
 
-For modify config files, please refer to cfg_kitti_fm.py.
+For modifying config files, please refer to cfg_kitti_fm.py.
 
 ## Finetuning
 If you want to finetune on a given weights, you can modify the 'resume_from' term from 'None' to an existing path to a pre-trained weight in the config files.

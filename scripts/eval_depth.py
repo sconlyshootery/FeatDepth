@@ -1,8 +1,6 @@
 from __future__ import absolute_import, division, print_function
-import os
 import cv2
 import sys
-import matplotlib.pyplot as plt
 import numpy as np
 from mmcv import Config
 
@@ -19,12 +17,10 @@ cv2.setNumThreads(0)  # This speeds up evaluation 5x on our unix systems (OpenCV
 STEREO_SCALE_FACTOR = 36
 MIN_DEPTH=1e-3
 MAX_DEPTH=80
-CFG_PATH = './config/cfg_kitti_wow.py'
- #'/node01_data5/monodepth2-test/model/ms_baseline/ms_baseline_50_256_800.pth' #/data1/jobs/io/out/changshu/canet
 
 
-def evaluate(MODEL_PATH):
-    filenames = readlines("mono/datasets/splits/exp/val_files.txt")
+def evaluate(MODEL_PATH, CFG_PATH, GT_PATH):
+    filenames = readlines("../mono/datasets/splits/exp/val_files.txt")
     cfg = Config.fromfile(CFG_PATH)
 
     dataset = KITTIRAWDataset(cfg.data['in_path'],
@@ -33,7 +29,7 @@ def evaluate(MODEL_PATH):
                               cfg.data['width'],
                               [0],
                               is_train=False,
-                              gt_depth_path='/node01_data5/monodepth2-test/monodepth2/gt_depths.npz')
+                              gt_depth_path=GT_PATH)
 
     dataloader = DataLoader(dataset,
                             1,
@@ -63,8 +59,7 @@ def evaluate(MODEL_PATH):
             pred_disps.append(pred_disp)
     pred_disps = np.concatenate(pred_disps)
 
-    gt_path = os.path.join(os.path.dirname(cfg.data['in_path']), 'monodepth2-test', 'monodepth2', "gt_depths.npz")
-    gt_depths = np.load(gt_path, allow_pickle=True, fix_imports=True, encoding='latin1')["data"]
+    gt_depths = np.load(GT_PATH, allow_pickle=True, fix_imports=True, encoding='latin1')["data"]
 
     print("-> Evaluating")
     if cfg.data['stereo_scale']:
@@ -107,13 +102,14 @@ def evaluate(MODEL_PATH):
     ratios = np.array(ratios)
     med = np.median(ratios)
     mean_errors = np.array(errors).mean(0)
-    print(" Scaling ratios | med: {:0.3f} | std: {:0.3f}".format(med, np.std(ratios / med)))
+    print("Scaling ratios | med: {:0.3f} | std: {:0.3f}".format(med, np.std(ratios / med)))
     print("\n" + ("{:>}| " * 7).format("abs_rel", "sq_rel", "rmse", "rmse_log", "a1", "a2", "a3"))
     print(("&{:.3f} " * 7).format(*mean_errors.tolist()) + "\\\\")
     print("\n-> Done!")
 
 
 if __name__ == "__main__":
-    for i in range(35,44):
-        MODEL_PATH = '/node01_data5/monodepth2-test/model/wow_320_1024/epoch_{}.pth'.format(i)
-        evaluate(MODEL_PATH)
+    CFG_PATH = '../config/cfg_kitti_fm.py'#path to cfg file
+    GT_PATH = '/media/user/harddisk/data/kitti/kitti_raw/rawdata/gt_depths.npz'#path to kitti gt depth
+    MODEL_PATH = '/media/user/harddisk/weight/fm_depth.pth'#path to model weights
+    evaluate(MODEL_PATH, CFG_PATH, GT_PATH)

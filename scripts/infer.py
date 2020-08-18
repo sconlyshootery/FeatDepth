@@ -16,16 +16,12 @@ from mono.datasets.utils import readlines
 from mono.datasets.kitti_dataset import KITTIRAWDataset
 
 cv2.setNumThreads(0)  # This speeds up evaluation 5x on our unix systems (OpenCV 3.3.1)
-CFG_PATH = './config/cfg_kitti_fm.py'
-MODEL_PATH = '/node01/jobs/io/out/changshu/wow_refine2/epoch_60.pth'
-OUT_PATH = '/node01_data5/monodepth2-test/kitti_test/fm_depth_refine2'
-if not os.path.exists(OUT_PATH):
-    os.mkdir(OUT_PATH)
 
 
-def evaluate():
-    filenames = readlines("mono/datasets/splits/kitti_test/val_files.txt")
-    cfg = Config.fromfile(CFG_PATH)
+
+def evaluate(cfg_path,model_path,gt_path, output_path):
+    filenames = readlines("../mono/datasets/splits/exp/val_files.txt")
+    cfg = Config.fromfile(cfg_path)
 
     dataset = KITTIRAWDataset(cfg.data['in_path'],
                               filenames,
@@ -33,7 +29,7 @@ def evaluate():
                               cfg.data['width'],
                               [0],
                               is_train=False,
-                              gt_depth_path='/node01_data5/monodepth2-test/monodepth2/gt_depths.npz')
+                              gt_depth_path=gt_path)
 
     dataloader = DataLoader(dataset,
                             1,
@@ -44,7 +40,7 @@ def evaluate():
 
     cfg.model['imgs_per_gpu'] = 1
     model = MONO.module_dict[cfg.model['name']](cfg.model)
-    checkpoint = torch.load(MODEL_PATH)
+    checkpoint = torch.load(model_path)
     model.load_state_dict(checkpoint['state_dict'], strict=False)
     model.cuda()
     model.eval()
@@ -55,7 +51,7 @@ def evaluate():
                 inputs[key] = ipt.cuda()
             outputs = model(inputs)
 
-            img_path = os.path.join(OUT_PATH, 'img_{:0>4d}.jpg'.format(batch_idx))
+            img_path = os.path.join(output_path, 'img_{:0>4d}.jpg'.format(batch_idx))
             plt.imsave(img_path, inputs[("color", 0, 0)][0].squeeze().transpose(0,1).transpose(1,2).cpu().numpy())
 
             disp = outputs[("disp", 0, 0)]
@@ -63,7 +59,7 @@ def evaluate():
             pred_disp = pred_disp[0, 0].cpu().numpy()
             pred_disp = cv2.resize(pred_disp, (cfg.data['width'], cfg.data['height']))
 
-            img_path = os.path.join(OUT_PATH, 'disp_{:0>4d}.jpg'.format(batch_idx))
+            img_path = os.path.join(output_path, 'disp_{:0>4d}.jpg'.format(batch_idx))
             vmax = np.percentile(pred_disp, 95)
             plt.imsave(img_path, pred_disp, cmap='magma', vmax=vmax)
 
@@ -71,4 +67,10 @@ def evaluate():
 
 
 if __name__ == "__main__":
-    evaluate()
+    cfg_path = '../config/cfg_kitti_fm.py'# path to cfg file
+    model_path = '/media/user/harddisk/weight/fm_depth.pth'# path to model weight
+    gt_path = '/media/user/harddisk/data/kitti/kitti_raw/rawdata/gt_depths.npz' # path to kitti gt depth
+    output_path = '/media/user/harddisk/results' # dir for saving depth maps
+    if not os.path.exists(output_path):
+        os.mkdir(output_path)
+    evaluate(cfg_path,model_path,gt_path,output_path)

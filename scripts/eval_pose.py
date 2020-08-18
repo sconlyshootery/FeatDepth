@@ -1,8 +1,7 @@
 from __future__ import absolute_import, division, print_function
 import os
-import numpy as np
-import argparse
 import sys
+import numpy as np
 
 import torch
 from torch.utils.data import DataLoader
@@ -10,51 +9,20 @@ from torch.utils.data import DataLoader
 sys.path.append('.')
 from mono.datasets.utils import readlines, dump_xyz, compute_ate, transformation_from_parameters
 from mono.datasets.kitti_dataset import KITTIOdomDataset
-from mono.model.mono_baseline.pose_encoder import PoseEncoder
-from mono.model.mono_baseline.pose_decoder import PoseDecoder
+from mono.model.mono_fm.pose_encoder import PoseEncoder
+from mono.model.mono_fm.pose_decoder import PoseDecoder
 
 
-def parse_args():
-    parser = argparse.ArgumentParser(description='Train a detector')
-
-    parser.add_argument('--data_path',
-                        default='/node01/odo/dataset')
-    parser.add_argument('--output_path',
-                        default=None)
-    parser.add_argument('--model_path',
-                        default='/node01/jobs/io/out/changshu/fm_odo/epoch_10.pth')
-    parser.add_argument('--height',
-                        default=320)
-    parser.add_argument('--width',
-                        default=1024)
-
-    parser.add_argument('--out_path',
-                        help='needed by job client')
-    parser.add_argument('--in_path',
-                        help='needed by job client')
-    parser.add_argument('--pretrained_path',
-                        help='needed by job client')
-    parser.add_argument('--job_name',
-                        help='needed by job client')
-    parser.add_argument('--job_id',
-                        help='needed by job client')
-    args = parser.parse_args()
-    return args
 
 
-def evaluate(opt):
-    sequence_id = int(opt.eval_split.split("_")[1])
 
-    filenames = readlines(os.path.join("mono",
-                                       "datasets",
-                                       "splits",
-                                       "odom",
-                                       "test_files_{:02d}.txt".format(sequence_id)))
+def evaluate(data_path,model_path,sequence_id,height,width):
+    filenames = readlines("../mono/datasets/splits/odom/test_files_{:02d}.txt".format(sequence_id))
 
-    dataset = KITTIOdomDataset(opt.data_path,
+    dataset = KITTIOdomDataset(data_path,
                                filenames,
-                               opt.height,
-                               opt.width,
+                               height,
+                               width,
                                [0, 1],
                                is_train=False,
                                img_ext='.png',
@@ -71,7 +39,7 @@ def evaluate(opt):
     pose_encoder = PoseEncoder(18, None, 2)
     pose_decoder = PoseDecoder(pose_encoder.num_ch_enc)
 
-    checkpoint = torch.load(opt.model_path)
+    checkpoint = torch.load(model_path)
     for name, param in pose_encoder.state_dict().items():
         pose_encoder.state_dict()[name].copy_(checkpoint['state_dict']['PoseEncoder.' + name])
     for name, param in pose_decoder.state_dict().items():
@@ -94,7 +62,7 @@ def evaluate(opt):
             pred_poses.append(transformation_from_parameters(axisangle[:, 0], translation[:, 0]).cpu().numpy())
     pred_poses = np.concatenate(pred_poses)
 
-    gt_poses_path = os.path.join(opt.data_path, "poses", "{:02d}.txt".format(sequence_id))
+    gt_poses_path = os.path.join(data_path, "poses", "{:02d}.txt".format(sequence_id))
     gt_global_poses = np.loadtxt(gt_poses_path).reshape(-1, 3, 4)
     gt_global_poses = np.concatenate((gt_global_poses, np.zeros((gt_global_poses.shape[0], 1, 4))), 1)
     gt_global_poses[:, 3, 3] = 1
@@ -111,16 +79,19 @@ def evaluate(opt):
         gt_local_xyzs = np.array(dump_xyz(gt_local_poses[i:i + track_length - 1]))
         ates.append(compute_ate(gt_local_xyzs, local_xyzs))
 
-    print("\n  {} Trajectory error: {:0.3f}, std: {:0.3f}\n".format(opts.eval_split, np.mean(ates), np.std(ates)))
+    print("\n  odom_{} Trajectory error: {:0.3f}, std: {:0.3f}\n".format(sequence_id, np.mean(ates), np.std(ates)))
 
-    # save_path = os.path.join(opt.load_weights_folder, "poses.npy")
+    # save_path = os.path.join(load_weights_folder, "poses.npy")
     # np.save(save_path, pred_poses)
     # print("-> Predictions saved to", save_path)
 
 
 if __name__ == "__main__":
-    opts = parse_args()
-    opts.eval_split ='odom_9'
-    evaluate(opts)
-    opts.eval_split = 'odom_10'
-    evaluate(opts)
+    data_path='/media/user/harddisk/data/kitti/Odometry/dataset'#path to kitti odometry
+    model_path = '/media/user/harddisk/weight/fm_depth.pth'
+    height=320
+    width=1024
+    sequence_id =9
+    evaluate(data_path,model_path,sequence_id,height,width)
+    sequence_id = 10
+    evaluate(data_path,model_path,sequence_id,height,width)

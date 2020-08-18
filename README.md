@@ -8,7 +8,7 @@ Offical codes for ECCV2020 paper --- ['Feature-metric Loss for Self-supervised L
 If you find our work useful in your research please consider citing our paper:
 
 ```
-@article{shu2020featdepth,
+@inproceedings{shu2020featdepth,
   title={Feature-metric Loss for Self-supervised Learning of Depth and Egomotion},
   author={Shu, Chang and Yu, Kun and Duan, Zhixiang and Yang, Kuiyuan},
   booktitle={ECCV},

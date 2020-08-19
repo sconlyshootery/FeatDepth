@@ -1,5 +1,8 @@
 # feature_metric_depth
-Offical codes for ECCV2020 paper --- ['Feature-metric Loss for Self-supervised Learning of Depth and Egomotion'](https://arxiv.org/pdf/2007.10603.pdf).
+This is offical codes for the methods described in
+> **Feature-metric Loss for Self-supervised Learning of Depth and Egomotion**
+>
+> [ECCV 2020](https://arxiv.org/pdf/2007.10603.pdf)
 
 <p align="center">
   <img src="assets/p.png" alt="performance" width="600" />

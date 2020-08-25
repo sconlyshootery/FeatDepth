@@ -39,11 +39,11 @@ We provide weights for [autoencoder](https://drive.google.com/file/d/1ncAWUMvLq2
 We provide an API interface for you to predict depth and pose from an image sequence and visulize some results.
 They are stored in folder 'scripts'.
 ```
-draw_odometry.py is used to several analytical curves and obtain standard kitti odometry evaluation results.
+draw_odometry.py is used to provide several analytical curves and obtain standard kitti odometry evaluation results.
 ```
 
 ```
-eval_pose.py is used to obtain kitti odometry evaluation results using the standard used by sfmlearner.
+eval_pose.py is used to obtain kitti odometry evaluation results.
 ```
 
 ```
@@ -51,7 +51,7 @@ eval_depth.py is used to obtain kitti depth evaluation results.
 ```
 
 ```
-infer.py is used to generate depth maps.
+infer.py is used to generate depth maps from given models.
 ```
 
 ## Training

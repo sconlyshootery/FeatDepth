@@ -73,6 +73,10 @@ You can modify the input resolution according to your computational resource.
 
 For modifying config files, please refer to cfg_kitti_fm.py.
 
+## Online refinement
+We provide cfg file for online refinement, you can use cfg_kitti_fm_refine.py to refine your model trained on kitti raw data by keeping training on test data.
+For settings of online refinement, please refer to details in cfg_kitti_fm_refine.py in the folder config.
+
 ## Finetuning
 If you want to finetune on a given weights, you can modify the 'resume_from' term from 'None' to an existing path to a pre-trained weight in the config files.
 

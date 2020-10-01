@@ -24,7 +24,7 @@ class mono_fm_joint(nn.Module):
         self.PoseEncoder = PoseEncoder(self.opt.pose_num_layers,
                                        self.opt.pose_pretrained_path)
         self.PoseDecoder = PoseDecoder(self.PoseEncoder.num_ch_enc)
-        self.Encoder = Encoder(self.opt.depth_num_layers, self.opt.depth_pretrained_path)
+        self.Encoder = Encoder(self.opt.depth_num_layers, self.opt.extractor_pretrained_path)
         self.Decoder = Decoder(self.Encoder.num_ch_enc)
         self.ssim = SSIM()
         self.backproject = Backproject(self.opt.imgs_per_gpu, self.opt.height, self.opt.width)

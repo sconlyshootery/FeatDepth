@@ -8,6 +8,7 @@ import torch
 from torch.utils.data import DataLoader
 
 sys.path.append('.')
+sys.path.append('..')
 from mono.datasets.euroc_dataset import FolderDataset
 from mono.datasets.kitti_dataset import KITTIOdomDataset
 from mono.datasets.utils import readlines,transformation_from_parameters
@@ -88,10 +89,10 @@ def odo(opt):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Train a detector')
-    parser.add_argument('--model_path', default='/media/user/harddisk/weight/fm_depth_odom.pth', help='model save path')
-    parser.add_argument('--data_path', default='/media/user/harddisk/data/kitti/Odometry/dataset', help='kitti odometry dataset path')
+    parser.add_argument('--model_path', default='/media/sconly/24eda5d5-e79b-423b-8dcc-8339a15f3219/weight/fm_depth_odom.pth', help='model save path')
+    parser.add_argument('--data_path', default='/media/sconly/24eda5d5-e79b-423b-8dcc-8339a15f3219/data/kitti/Odometry', help='kitti odometry dataset path')
     parser.add_argument('--gt_dir', default='../mono/datasets/gt_pose',help='kitti odometry gt path')
-    parser.add_argument('--result_dir', default='/media/user/harddisk/odom/')
+    parser.add_argument('--result_dir', default='/media/sconly/24eda5d5-e79b-423b-8dcc-8339a15f3219/odom/')
     parser.add_argument('--height', default=192)
     parser.add_argument('--width', default=640)
     parser.add_argument('--kitti', default=True, help='whether test on the kitti odometry dataset')

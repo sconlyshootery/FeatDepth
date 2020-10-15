@@ -23,7 +23,27 @@ If you find our work useful in your research please consider citing our paper:
 Our codes are based on mmcv for distributed learning.
 To make it convenient for you to train and test our codes, we provide our [anaconda environment](https://drive.google.com/file/d/1NSoGxhP8UpyW-whzpqP3WIB6u2mgGP49/view?usp=sharing), 
 you only need to download it and extract it to the folder of your anaconda environments, and use the python in it to run our codes.
-Besides, a computer installed with CUDA10 is required.
+
+If you would like to configure your annaconda environment for yourself, we provide a requirement.txt:
+### Requirements:
+- PyTorch1.2+, Python3.5+, Cuda10.0+
+- mmcv==0.4.4
+
+```bash
+# first, make sure that your conda is setup properly with the right environment
+# for that, check that `which conda`, `which pip` and `which python` points to the
+# right path. From a clean conda env, this is what you need to do
+
+conda create --name featdepth python=3.7
+conda activate featdepth
+
+# this installs the right pip and dependencies for the fresh python
+conda install ipython
+conda install pip
+
+# install required packages from requirements.txt
+pip install -r requirements.txt
+```
 
 ## KITTI training data
 

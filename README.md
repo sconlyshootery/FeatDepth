@@ -29,7 +29,7 @@ Our codes are based on mmcv for distributed learning.
 To make it convenient for you to train and test our codes, we provide our [anaconda environment](https://drive.google.com/file/d/1NSoGxhP8UpyW-whzpqP3WIB6u2mgGP49/view?usp=sharing), 
 you only need to download it and extract it to the folder of your anaconda environments, and use the python in it to run our codes.
 
-If you would like to set up your annaconda environment by yourself, we provide a requirement.txt:
+If you would like to set up your anaconda environment by yourself, you can do as follows:
 ```bash
 # first, make sure that your conda is setup properly with the right environment
 # for that, check that `which conda`, `which pip` and `which python` points to the

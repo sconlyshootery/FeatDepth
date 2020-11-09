@@ -19,4 +19,3 @@ thop
 torch>=1.2
 torchvision>=0.4.0
 pypng
-spatial-correlation-sampler

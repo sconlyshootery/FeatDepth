@@ -14,11 +14,12 @@ from ..registry import MONO
 
 def build_extractor(num_layers, pretrained_path):
     extractor = Encoder(num_layers, None)
-    checkpoint = torch.load(pretrained_path, map_location='cpu')
-    for name, param in extractor.state_dict().items():
-        extractor.state_dict()[name].copy_(checkpoint['state_dict']['Encoder.' + name])
-    for param in extractor.parameters():
-        param.requires_grad = False
+    if pretrained_path is not None:
+        checkpoint = torch.load(pretrained_path, map_location='cpu')
+        for name, param in extractor.state_dict().items():
+            extractor.state_dict()[name].copy_(checkpoint['state_dict']['Encoder.' + name])
+        for param in extractor.parameters():
+            param.requires_grad = False
     return extractor
 
 

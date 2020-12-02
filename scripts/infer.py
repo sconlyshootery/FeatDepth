@@ -10,6 +10,7 @@ import torch
 from torch.utils.data import DataLoader
 
 sys.path.append('.')
+sys.path.append('..')
 from mono.model.registry import MONO
 from mono.model.mono_baseline.layers import disp_to_depth
 from mono.datasets.utils import readlines
@@ -17,60 +18,59 @@ from mono.datasets.kitti_dataset import KITTIRAWDataset
 
 cv2.setNumThreads(0)  # This speeds up evaluation 5x on our unix systems (OpenCV 3.3.1)
 
+MIN_DEPTH=1e-3
+MAX_DEPTH=80
+SCALE = 36#we set baseline=0.0015m which is 36 times smaller than the actual value (0.54m)
 
+def transform(cv2_img, height=320, width=1024):
+    im_tensor = torch.from_numpy(cv2_img.astype(np.float32)).cuda().unsqueeze(0)
+    im_tensor = im_tensor.permute(0, 3, 1, 2).contiguous()
+    im_tensor = torch.nn.functional.interpolate(im_tensor, [height, width],mode='bilinear', align_corners=False)
+    im_tensor /= 255
+    return im_tensor
 
-def evaluate(cfg_path,model_path,gt_path, output_path):
-    filenames = readlines("../mono/datasets/splits/exp/val_files.txt")
+def predict(cv2_img, model):
+    original_height, original_width = cv2_img.shape[:2]
+    im_tensor = transform(cv2_img)
+
+    with torch.no_grad():
+        input = {}
+        input['color_aug', 0, 0] = im_tensor
+        outputs = model(input)
+
+    disp = outputs[("disp", 0, 0)]
+    disp_resized = torch.nn.functional.interpolate(disp, (original_height, original_width), mode="bilinear", align_corners=False)
+    min_disp = 1/MAX_DEPTH
+    max_disp = 1/MIN_DEPTH
+    depth = 1/(disp_resized.squeeze().cpu().numpy()*max_disp + min_disp) * SCALE
+    return depth, disp_resized.squeeze().cpu().numpy()
+
+def evaluate(cfg_path, model_path, img_path, output_path):
     cfg = Config.fromfile(cfg_path)
-
-    dataset = KITTIRAWDataset(cfg.data['in_path'],
-                              filenames,
-                              cfg.data['height'],
-                              cfg.data['width'],
-                              [0],
-                              is_train=False,
-                              gt_depth_path=gt_path)
-
-    dataloader = DataLoader(dataset,
-                            1,
-                            shuffle=False,
-                            num_workers=4,
-                            pin_memory=True,
-                            drop_last=False)
-
-    cfg.model['imgs_per_gpu'] = 1
+    cfg['model']['depth_pretrained_path'] = None
+    cfg['model']['pose_pretrained_path'] = None
+    cfg['model']['extractor_pretrained_path'] = None
     model = MONO.module_dict[cfg.model['name']](cfg.model)
     checkpoint = torch.load(model_path)
-    model.load_state_dict(checkpoint['state_dict'], strict=False)
+    model.load_state_dict(checkpoint['state_dict'], strict=True)
     model.cuda()
     model.eval()
 
     with torch.no_grad():
-        for batch_idx, inputs in enumerate(dataloader):
-            for key, ipt in inputs.items():
-                inputs[key] = ipt.cuda()
-            outputs = model(inputs)
+        cv2_img = cv2.imread(img_path)
+        cv2_img = cv2.cvtColor(cv2_img, cv2.COLOR_BGR2RGB)
 
-            img_path = os.path.join(output_path, 'img_{:0>4d}.jpg'.format(batch_idx))
-            plt.imsave(img_path, inputs[("color", 0, 0)][0].squeeze().transpose(0,1).transpose(1,2).cpu().numpy())
+        depth, disp_resized = predict(cv2_img, model)
 
-            disp = outputs[("disp", 0, 0)]
-            pred_disp, _ = disp_to_depth(disp, 0.1, 100)
-            pred_disp = pred_disp[0, 0].cpu().numpy()
-            pred_disp = cv2.resize(pred_disp, (cfg.data['width'], cfg.data['height']))
-
-            img_path = os.path.join(output_path, 'disp_{:0>4d}.jpg'.format(batch_idx))
-            vmax = np.percentile(pred_disp, 95)
-            plt.imsave(img_path, pred_disp, cmap='magma', vmax=vmax)
+        vmax = np.percentile(disp_resized, 95)
+        plt.imsave(output_path, disp_resized, cmap='magma', vmax=vmax)
 
     print("\n-> Done!")
 
 
 if __name__ == "__main__":
     cfg_path = '../config/cfg_kitti_fm.py'# path to cfg file
-    model_path = '/media/user/harddisk/weight/fm_depth.pth'# path to model weight
-    gt_path = '/media/user/harddisk/data/kitti/kitti_raw/rawdata/gt_depths.npz' # path to kitti gt depth
-    output_path = '/media/user/harddisk/results' # dir for saving depth maps
-    if not os.path.exists(output_path):
-        os.mkdir(output_path)
-    evaluate(cfg_path,model_path,gt_path,output_path)
+    model_path = '/media/sconly/harddisk/weight/fm_depth.pth'# path to model weight
+    img_path = '../assets/test.png'
+    output_path = '../assets/test_disp.png' # dir for saving depth maps
+    evaluate(cfg_path, model_path, img_path, output_path)

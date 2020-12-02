@@ -75,6 +75,9 @@ eval_depth.py is used to obtain kitti depth evaluation results.
 infer.py is used to generate depth maps from given models.
 ```
 
+```
+infer_singleimage.py is used to test a single image for view.
+```
 ## Training
 You can use following command to launch distributed learning of our model:
 ```shell

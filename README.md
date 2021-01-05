@@ -52,9 +52,13 @@ Our training data is the same with other self-supervised monocular depth estimat
 
 ## pretrained weights
 
-We provide weights for [autoencoder](https://drive.google.com/file/d/1ncAWUMvLq2ETMpG-7eI9qfILce_cPPfy/view?usp=sharing), [our model trained on kitti raw data](https://drive.google.com/file/d/1HlAubfuja5nBKpfNU3fQs-3m3Zaiu9RI/view?usp=sharing), 
-[our refined model by using online refinement on test split of kitti raw data](https://drive.google.com/file/d/1CfCtz55s4QHya3y3UslxsuD_0cxNlA-D/view?usp=sharing) , [our model train on kitti odometry](https://drive.google.com/file/d/1vQJbiyPXv_XNQYpyVocDB3-LKwx2LVka/view?usp=sharing), 
-[our model trained on Euroc](https://drive.google.com/file/d/1IMIAKpHXmqyUxiUIiqqp5qI-nJXDUSmj/view?usp=sharing), and [our model trained on NYU](https://drive.google.com/file/d/1Mo050P-DgG-jrNXWww07GXXyst5h5Q74/view?usp=sharing).
+We provide weights for: 
+(1) [FeatureNet trained on the kitti raw data](https://drive.google.com/file/d/1ncAWUMvLq2ETMpG-7eI9qfILce_cPPfy/view?usp=sharing);  
+(2) [FeatDepth trained on the kitti raw data](https://drive.google.com/file/d/1HlAubfuja5nBKpfNU3fQs-3m3Zaiu9RI/view?usp=sharing);  
+(3) [FeatDepth finetuned on the test split of kitti raw data by using online refinement](https://drive.google.com/file/d/1CfCtz55s4QHya3y3UslxsuD_0cxNlA-D/view?usp=sharing);  
+(4) [FeatDepth trained on kitti odometry](https://drive.google.com/file/d/1vQJbiyPXv_XNQYpyVocDB3-LKwx2LVka/view?usp=sharing);  
+(5) [FeatDepth trained on Euroc](https://drive.google.com/file/d/1IMIAKpHXmqyUxiUIiqqp5qI-nJXDUSmj/view?usp=sharing);  
+(6) [FeatDepth trained on NYU](https://drive.google.com/file/d/1Mo050P-DgG-jrNXWww07GXXyst5h5Q74/view?usp=sharing).
 
 ## API
 We provide an API interface for you to predict depth and pose from an image sequence and visulize some results.
@@ -86,12 +90,12 @@ You can use following command to launch distributed learning of our model:
 Here nproc_per_node refers to GPU number you want to use.
 
 ## Configurations
-Our provide a variety of config files for training on different datasets.
+We provide a variety of config files for training on different datasets.
 They are stored in config folder.
 
 For example, 'cfg_kitti_fm.py' is used to train our model on kitti dataset, where the weights of autoencoder are loaded from the pretrained weights we provide and fixed during the traing. 
 This mode is prefered when your GPU memory is lower than 16 GB;
-'cfg_kitti_fm_joint.spy' is used to train our model on kitti dataset, where the autoencoder is jointly trained with depthnet and posenet.
+'cfg_kitti_fm_joint.py' is used to train our model on kitti dataset, where the autoencoder is jointly trained with depthnet and posenet.
 And we rescale the input resolution of our model to ensure training with 12 GB GPU memory, slightly reducing the performance.
 You can modify the input resolution according to your computational resource.
 

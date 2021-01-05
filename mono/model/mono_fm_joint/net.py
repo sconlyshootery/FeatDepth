@@ -185,8 +185,17 @@ class mono_fm_joint(nn.Module):
             backproject = Backproject(self.opt.imgs_per_gpu, int(self.opt.height/2), int(self.opt.width/2))
             project = Project(self.opt.imgs_per_gpu, int(self.opt.height/2), int(self.opt.width/2))
 
-            cam_points = backproject(depth, inputs[("inv_K")])
-            pix_coords = project(cam_points, inputs[("K")], T)#[b,h,w,2]
+            K = inputs[("K")].clone()
+            K[:, 0, :] /= 2
+            K[:, 1, :] /= 2
+
+            inv_K = torch.zeros_like(K)
+            for i in range(inv_K.shape[0]):
+                inv_K[i, :, :] = torch.pinverse(K[i, :, :])
+
+            cam_points = backproject(depth, inv_K)
+            pix_coords = project(cam_points, K, T)  # [b,h,w,2]
+
             img = inputs[("color", frame_id, 0)]
             src_f = self.Encoder(img)[0]
             outputs[("feature", frame_id, 0)] = F.grid_sample(src_f, pix_coords, padding_mode="border")

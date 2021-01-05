@@ -22,7 +22,7 @@ If you find our work useful in your research please consider citing our paper:
 ## Setup
 
 ### Requirements:
-- PyTorch1.2+, Python3.5+, Cuda10.0+
+- PyTorch1.1+, Python3.5+, Cuda10.0+
 - mmcv==0.4.4
 
 Our codes are based on mmcv for distributed learning.

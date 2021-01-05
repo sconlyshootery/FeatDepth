@@ -52,7 +52,7 @@ Our training data is the same with other self-supervised monocular depth estimat
 
 ## pretrained weights
 
-We provide weights for: 
+We provide weights for:  
 (1) [FeatureNet trained on the kitti raw data](https://drive.google.com/file/d/1ncAWUMvLq2ETMpG-7eI9qfILce_cPPfy/view?usp=sharing);  
 (2) [FeatDepth trained on the kitti raw data](https://drive.google.com/file/d/1HlAubfuja5nBKpfNU3fQs-3m3Zaiu9RI/view?usp=sharing);  
 (3) [FeatDepth finetuned on the test split of kitti raw data by using online refinement](https://drive.google.com/file/d/1CfCtz55s4QHya3y3UslxsuD_0cxNlA-D/view?usp=sharing);  

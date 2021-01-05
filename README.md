@@ -53,7 +53,7 @@ Our training data is the same with other self-supervised monocular depth estimat
 ## pretrained weights
 
 We provide weights for:  
-(1) [FeatureNet trained on the kitti raw data](https://drive.google.com/file/d/1ncAWUMvLq2ETMpG-7eI9qfILce_cPPfy/view?usp=sharing);  
+(1) [AutoEncoder trained on the kitti raw data](https://drive.google.com/file/d/1ncAWUMvLq2ETMpG-7eI9qfILce_cPPfy/view?usp=sharing);  
 (2) [FeatDepth trained on the kitti raw data](https://drive.google.com/file/d/1HlAubfuja5nBKpfNU3fQs-3m3Zaiu9RI/view?usp=sharing);  
 (3) [FeatDepth finetuned on the test split of kitti raw data by using online refinement](https://drive.google.com/file/d/1CfCtz55s4QHya3y3UslxsuD_0cxNlA-D/view?usp=sharing);  
 (4) [FeatDepth trained on kitti odometry](https://drive.google.com/file/d/1vQJbiyPXv_XNQYpyVocDB3-LKwx2LVka/view?usp=sharing);  
@@ -93,10 +93,11 @@ Here nproc_per_node refers to GPU number you want to use.
 We provide a variety of config files for training on different datasets.
 They are stored in config folder.
 
-For example, 'cfg_kitti_fm.py' is used to train our model on kitti dataset, where the weights of autoencoder are loaded from the pretrained weights we provide and fixed during the traing. 
-This mode is prefered when your GPU memory is lower than 16 GB;
-'cfg_kitti_fm_joint.py' is used to train our model on kitti dataset, where the autoencoder is jointly trained with depthnet and posenet.
-And we rescale the input resolution of our model to ensure training with 12 GB GPU memory, slightly reducing the performance.
+For example:  
+(1) 'cfg_kitti_fm.py' is used to train our model on kitti dataset, where the weights of autoencoder are loaded from the pretrained weights we provide and fixed during the traing. 
+This mode is prefered when your GPU memory is lower than 16 GB;  
+(2) 'cfg_kitti_fm_joint.py' is used to train our model on kitti dataset, where the autoencoder is jointly trained with depthnet and posenet.
+We rescale the input resolution of our model to ensure training with 12 GB GPU memory, slightly reducing the performance.
 You can modify the input resolution according to your computational resource.
 
 For modifying config files, please refer to cfg_kitti_fm.py.

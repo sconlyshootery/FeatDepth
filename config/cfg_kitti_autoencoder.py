@@ -33,7 +33,7 @@ model = dict(
     automask = True,
     disp_norm = True,
     use_min_construct = True,
-    dis=0,
+    dis=0.001,
     cvt=0.001,
 )
 

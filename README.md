@@ -107,7 +107,12 @@ We provide cfg file for online refinement, you can use cfg_kitti_fm_refine.py to
 For settings of online refinement, please refer to details in cfg_kitti_fm_refine.py in the folder config.
 
 ## Finetuning
-If you want to finetune on a given weights, you can modify the 'resume_from' term from 'None' to an existing path to a pre-trained weight in the config files.
+If you want to finetune on a given weights, you can modify the 'finetune' term from 'None' to an existing path to a pre-trained weight in the config files.
+
+## Resuming
+If you want to reproduce the training state of a certain pretrained weight, you can modify the 'resume_from' term from 'None' to an existing path to a pre-trained weight in the config files.
+The program will continue training from where the pretrained weight ends.
+Note that you have to increase the 'total_epochs' value to make sure that the training have enough epochs left to continue.
 
 ## Notes
 Our model predicts inverse depths.
